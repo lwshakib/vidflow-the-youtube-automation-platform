@@ -122,6 +122,16 @@ Contributions are welcome! Please open issues or submit pull requests for new fe
 4. Push to the branch (`git push origin feature/YourFeature`)
 5. Open a pull request
 
+## Remotion Docs
+
+For more information about Remotion, see the following official resources:
+
+- [Remotion Homepage](https://www.remotion.dev/)
+- [Remotion Documentation](https://www.remotion.dev/docs/)
+- [Remotion Player Examples](https://www.remotion.dev/docs/player/examples)
+- [Remotion Lambda Setup](https://www.remotion.dev/docs/lambda/setup)
+- [Remotion Cloud Run Setup](https://www.remotion.dev/docs/cloudrun/setup)
+
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

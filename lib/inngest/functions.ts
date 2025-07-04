@@ -305,7 +305,7 @@ export const uploadVideoOnYoutube = inngest.createFunction(
         const videoStream = await getVideoStream(videoUrl);
 
         const uploadResponse = await youtube.videos.insert({
-          part: "snippet,status",
+          part: "snippet,status" as any, 
           requestBody: {
             snippet: {
               title: generateDataForYoutubeVideo.title,
@@ -322,9 +322,9 @@ export const uploadVideoOnYoutube = inngest.createFunction(
         });
 
         return uploadResponse.data;
-      } catch (err) {
+      } catch (err: any) {
         console.error("Upload failed:", err);
-        return err.message;
+        return err?.message;
       }
     });
 
