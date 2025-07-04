@@ -51,7 +51,8 @@ prisma/             # Database schema and migrations
 4. **Run database migrations:**
 
    ```bash
-   npx prisma migrate deploy
+   npm run postinstall
+   npm run migrate:dev
    ```
 
 5. **Start the development server:**
@@ -85,6 +86,31 @@ prisma/             # Database schema and migrations
 - **AWS** (for storage, if configured)
 - **OpenAI / Gemini** (AI integrations)
 - **Tailwind CSS** (via globals.css)
+
+## Architecture: Client, Inngest, and Workflows
+
+Below is a high-level diagram showing how the client, API, Inngest, and Inngest workflows interact:
+
+```mermaid
+sequenceDiagram
+    participant Client as "Client (Frontend/Backend API)"
+    participant API as "Next.js API Route (e.g. /api/generate-video)"
+    participant Inngest as "Inngest Event System"
+    participant Workflow1 as "Workflow: generateVideoData"
+    participant Workflow2 as "Workflow: uploadVideoOnYoutube"
+
+    Client->>API: Sends POST request (e.g. generate video)
+    API->>Inngest: inngest.send({ name, data })
+    Inngest->>Workflow1: Triggers 'generate-video-data' workflow
+    Workflow1-->>Inngest: Completes steps (DB, audio, images, render, etc.)
+    Inngest-->>API: (Optional) Status/Result
+
+    Client->>API: Sends POST request (e.g. upload video)
+    API->>Inngest: inngest.send({ name, data })
+    Inngest->>Workflow2: Triggers 'upload-video-on-youtube' workflow
+    Workflow2-->>Inngest: Completes steps (SEO, upload, email, etc.)
+    Inngest-->>API: (Optional) Status/Result
+```
 
 ## Contributing
 
