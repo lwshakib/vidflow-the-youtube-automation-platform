@@ -135,3 +135,25 @@ For more information about Remotion, see the following official resources:
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Deployment: Vercel, Inngest, and Google Cloud
+
+### 1. Deploy to Vercel
+
+- Push your code to your GitHub repository.
+- Import the project into [Vercel](https://vercel.com/) and follow the prompts to deploy.
+- Set up all required environment variables in the Vercel dashboard (see `.env.example`).
+
+### 2. Inngest Integration
+
+- Go to [Inngest](https://app.inngest.com/) and click **Sync App** to connect your deployment.
+- In Inngest, locate your app and copy the `INNGEST_SIGNING_KEY`.
+- In your Vercel project settings, add `INNGEST_SIGNING_KEY` as an environment variable with the value from Inngest.
+- Redeploy your project on Vercel after updating environment variables.
+
+### 3. Google Cloud Console (OAuth)
+
+- In the [Google Cloud Console](https://console.cloud.google.com/apis/credentials), add your deployed Vercel domain (e.g., `https://your-app.vercel.app`) to the list of authorized domains for your OAuth credentials.
+- Save changes and publish the app to production if required.
+
+---

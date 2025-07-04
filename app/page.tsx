@@ -31,7 +31,7 @@ export default function LandingPage() {
       {/* Header */}
       <header className="px-8 py-4 flex justify-between items-center border-b border-zinc-200 dark:border-white/10 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-md shadow-md sticky top-0  transition-all">
         <div className="flex items-center gap-3">
-          <img src="/logo.svg" alt="Instant Reel Logo" className="w-6 h-6" />
+          <img src="/logo.svg" alt="VidflowLogo" className="w-6 h-6" />
           <span className="text-xl font-bold tracking-wide text-zinc-900 dark:text-white drop-shadow-sm">
             Vidflow
           </span>
@@ -149,7 +149,7 @@ export default function LandingPage() {
         >
           <AccordionItem value="item-1">
             <AccordionTrigger>
-              How does Instant Reel automate YouTube Shorts?
+              How does Vidflow automate YouTube Shorts?
             </AccordionTrigger>
             <AccordionContent className="flex flex-col gap-4 text-balance">
               <p>
@@ -322,9 +322,9 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 px-4">
           <div className="flex flex-col items-center md:items-start">
             <span className="font-bold text-lg dark:text-white text-zinc-900 mb-2">
-              Instant Reel
+              Vidflow
             </span>
-            <span className="mb-2">Automate your YouTube Shorts with AI.</span>
+            <span className="mb-2">Automate your YouTube Journey with Us.</span>
             <div className="flex gap-3 mt-2">
               <a href="#" aria-label="Twitter" className="hover:text-blue-400">
                 <svg
@@ -386,7 +386,7 @@ export default function LandingPage() {
           </div>
         </div>
         <div className="mt-8 text-center text-xs text-gray-500 dark:text-gray-500">
-          © {new Date().getFullYear()} Instant Reel. All rights reserved.
+          © {new Date().getFullYear()} Vidflow. All rights reserved.
         </div>
       </footer>
     </div>
