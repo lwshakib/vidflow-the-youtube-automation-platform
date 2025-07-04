@@ -8,21 +8,35 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PricingTable } from "@clerk/nextjs";
 import { ArrowRight, CheckCircle } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useRef } from "react";
 
 export default function LandingPage() {
+  const pricingRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (window.location.hash === "#pricing" && pricingRef.current) {
+      const y =
+        pricingRef.current.getBoundingClientRect().top +
+        window.pageYOffset -
+        100;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white">
       {/* Header */}
-      <header className="px-8 py-4 flex justify-between items-center border-b border-zinc-200 dark:border-white/10 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-md shadow-md sticky top-0 z-30 transition-all">
+      <header className="px-8 py-4 flex justify-between items-center border-b border-zinc-200 dark:border-white/10 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-md shadow-md sticky top-0  transition-all">
         <div className="flex items-center gap-3">
           <img src="/logo.svg" alt="Instant Reel Logo" className="w-6 h-6" />
           <span className="text-xl font-bold tracking-wide text-zinc-900 dark:text-white drop-shadow-sm">
             Vidflow
           </span>
         </div>
-        <div className="flex gap-4">  
+        <div className="flex gap-4">
           <Link href={"/dashboard"}>
             <Button
               variant="outline"
@@ -237,43 +251,70 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-20 px-6 max-w-6xl mx-auto">
+      <section
+        ref={pricingRef}
+        id="pricing"
+        className="py-20 px-6 max-w-6xl mx-auto"
+      >
         <h2 className="text-3xl font-bold text-center mb-12 text-zinc-900 dark:text-white">
           Simple, Transparent Pricing
         </h2>
-        <div className="grid md:grid-cols-3 gap-8">
-          {["Starter", "Pro", "Enterprise"].map((tier, i) => (
-            <Card
-              key={tier}
-              className="bg-white/5 dark:bg-zinc-900 border-none text-center"
-            >
-              <CardHeader>
-                <CardTitle className="text-xl font-semibold mb-4 dark:text-white text-zinc-900">
-                  {tier}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-4xl font-bold text-blue-400 mb-4">
-                  ${(i + 1) * 19}
-                </p>
-                <Button variant="outline">Choose Plan</Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <PricingTable />
       </section>
 
       {/* Call to Action */}
-      <section className="py-20 text-center">
-        <h2 className="text-4xl font-bold mb-6 text-zinc-900 dark:text-white">
+      <section className="py-24 text-center relative overflow-hidden bg-gradient-to-br from-green-50 via-white to-green-100 dark:from-zinc-900 dark:via-zinc-800 dark:to-green-950 transition-colors">
+        {/* Decorative Badge */}
+        <div className="flex justify-center mb-4">
+          <span className="inline-block px-4 py-1 rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 text-xs font-semibold shadow-md animate-bounce">
+            🚀 New for 2025!
+          </span>
+        </div>
+        <h2 className="text-4xl font-bold mb-3 text-zinc-900 dark:text-white drop-shadow-lg">
           Ready to Go Viral?
         </h2>
+        <p className="text-lg text-zinc-700 dark:text-zinc-300 mb-8 max-w-xl mx-auto">
+          Join thousands of creators automating their YouTube Shorts workflow.
+          Start for free—no credit card required!
+        </p>
         <Button
           size="lg"
-          className="text-white bg-green-600 hover:bg-green-700"
+          className="text-white bg-green-600 hover:bg-green-700 shadow-lg relative animate-pulse focus:ring-4 focus:ring-green-300 dark:focus:ring-green-800 transition-all duration-300"
         >
-          Join Now for Free <ArrowRight className="ml-2 w-4 h-4" />
+          <span className="relative z-10 flex items-center">
+            Join Now for Free <ArrowRight className="ml-2 w-4 h-4" />
+          </span>
+          {/* Glowing effect */}
+          <span
+            className="absolute inset-0 rounded-lg bg-green-400 opacity-30 blur-lg animate-ping z-0"
+            aria-hidden="true"
+          ></span>
         </Button>
+        {/* Decorative sparkles */}
+        <svg
+          className="absolute left-10 top-10 w-12 h-12 opacity-30 text-green-400 animate-spin-slow"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke="currentColor"
+            strokeWidth="2"
+            d="M12 2v2m0 16v2m10-10h-2M4 12H2m15.07-7.07-1.42 1.42M6.34 17.66l-1.42 1.42m12.02 0-1.42-1.42M6.34 6.34 4.92 4.92"
+          />
+        </svg>
+        <svg
+          className="absolute right-10 bottom-10 w-10 h-10 opacity-20 text-green-300 animate-spin-reverse"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="2"
+          />
+        </svg>
       </section>
 
       {/* Footer */}

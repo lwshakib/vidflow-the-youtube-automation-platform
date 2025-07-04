@@ -32,8 +32,8 @@ function CreateVideoPage({}: Props) {
     return selectedTab === "suggestions"
       ? selectedSuggestion
       : customTopic.trim()
-      ? customTopic
-      : null;
+        ? customTopic
+        : null;
   }, [selectedTab, selectedSuggestion, customTopic]);
 
   const [scriptLoading, setScriptLoading] = useState(false);
@@ -72,17 +72,7 @@ function CreateVideoPage({}: Props) {
       );
       return;
     }
-    // console.log({
-    //   projectTitle,
-    //   selectedTopic,
-    //   selectedStyle,
-    //   selectedVoice,
-    //   selectedCaptionStyle,
-    //   selectedScript:
-    //     selectedScriptIdx !== null
-    //       ? generatedScripts[selectedScriptIdx].content
-    //       : null,
-    // });
+
     const script =
       selectedScriptIdx !== null
         ? generatedScripts[selectedScriptIdx].content
@@ -102,9 +92,19 @@ function CreateVideoPage({}: Props) {
     });
 
     const data = await res.json();
-    if (data.result.ids) {
+    if (data.success && data.data) {
       router.push("/my-videos");
       toast.success("Video added to queue....");
+    }
+    if (res.status === 429) {
+      toast.info(data.message, {
+        action: {
+          label: "Upgrade plan",
+          onClick: () => {
+            router.push("/#pricing");
+          },
+        },
+      });
     }
   };
 
