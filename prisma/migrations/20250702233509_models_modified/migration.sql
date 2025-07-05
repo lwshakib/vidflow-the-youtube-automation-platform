@@ -1,3 +1,0 @@
--- AlterTable
-ALTER TABLE "VideoData" ALTER COLUMN "audioUrl" DROP NOT NULL,
-ALTER COLUMN "captions" DROP NOT NULL;
