@@ -10,7 +10,12 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import {
+  Clock,
+  DollarSign,
+  Image,
+  Images,
   LayoutDashboard,
+  Palette,
   Sparkles,
   Video,
   Waypoints,
@@ -115,6 +120,69 @@ export function AppSidebar() {
                       <Link href="/my-videos">
                         <Youtube className="mr-2" />
                         <span>My Videos</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={pathname === "/my-thumbnails"}
+                    >
+                      <Link href="/my-thumbnails">
+                        <Images className="mr-2" />
+                        <span>My Thumbnails</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={pathname === "/my-logos"}
+                    >
+                      <Link href="/my-logos">
+                        <Palette className="mr-2" />
+                        <span>My Logos</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={pathname === "/thumbnail-generator"}
+                    >
+                      <Link href="/thumbnail-generator">
+                        <Image className="mr-2" />
+                        <span>Thumbnail Generator</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={pathname === "/logo-generator"}
+                    >
+                      <Link href="/logo-generator">
+                        <Palette className="mr-2" />
+                        <span>Logo Generator</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={pathname === "/smart-upload-scheduler"}
+                    >
+                      <Link href="/smart-upload-scheduler">
+                        <Clock className="mr-2" />
+                        <span>Smart Upload Scheduler</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild isActive={pathname === "/plans"}>
+                      <Link href="/plans">
+                        <DollarSign className="mr-2" />
+                        <span>Plans</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

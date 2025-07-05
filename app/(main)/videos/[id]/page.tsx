@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useAuth } from "@clerk/clerk-react";
+import { useAuth } from "@clerk/nextjs";
 import { useQuery } from "@tanstack/react-query";
 import {
   ArrowLeft,
@@ -16,7 +16,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import ConnectYoutubeButton from "../../_components/connect-youtube-button";
 import RemotionPlayer from "../../_components/remotion-player";
@@ -30,6 +29,13 @@ const fetchVideoDetails = async (params: any) => {
   const data = await response.json();
   if (!response.ok || !data.success) throw new Error(data.message);
   return data.data;
+};
+
+const checkYouTubeStatus = async () => {
+  const response = await fetch("/api/youtube/status");
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message);
+  return data;
 };
 
 function page({}: Props) {
@@ -46,14 +52,11 @@ function page({}: Props) {
     queryFn: () => fetchVideoDetails(params),
   });
 
-  const [hasYoutubeToken, setHasYoutubeToken] = useState(false);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("google_token_for_youtube_access");
-      setHasYoutubeToken(!!token);
-    }
-  }, []);
+  const { data: youtubeStatus, isLoading: youtubeLoading } = useQuery({
+    queryKey: ["youtubeStatus"],
+    queryFn: checkYouTubeStatus,
+    refetchInterval: 30000, // Refetch every 30 seconds
+  });
 
   // Format date
   const formatDate = (dateStr: string) => {
@@ -77,18 +80,28 @@ function page({}: Props) {
   };
 
   const handleUploadToYoutube = async () => {
-    const response = await fetch("/api/upload/youtube", {
-      method: "POST",
-      body: JSON.stringify({
-        videoUrl: videoData.videoUrl,
-        userId: userId,
-        script: videoData.script,
-        accessToken: localStorage.getItem("google_token_for_youtube_access"),
-      }),
-    });
-    const data = await response.json();
-    if (data.success) {
-      toast.success(data.message);
+    try {
+      const response = await fetch("/api/upload/youtube", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          videoUrl: videoData.videoUrl,
+          script: videoData.script,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        toast.success(data.message);
+      } else {
+        toast.error(data.message || "Failed to upload to YouTube");
+      }
+    } catch (error) {
+      console.error("Error uploading to YouTube:", error);
+      toast.error("Failed to upload to YouTube");
     }
   };
 
@@ -205,9 +218,16 @@ function page({}: Props) {
               </Button>
             </div>
             <div className="bg-zinc-900 border-zinc-800 w-full h-auto rounded-xl p-4 sm:p-6 md:p-8 m-2 sm:m-4 shadow-xl">
-              {hasYoutubeToken ? (
+              {youtubeLoading ? (
+                <div className="flex items-center justify-center py-4">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-zinc-400"></div>
+                  <span className="ml-2 text-zinc-400">
+                    Checking YouTube connection...
+                  </span>
+                </div>
+              ) : youtubeStatus?.connected ? (
                 <Button onClick={handleUploadToYoutube}>
-                  Upload To youtube
+                  Upload To YouTube
                 </Button>
               ) : (
                 <ConnectYoutubeButton />

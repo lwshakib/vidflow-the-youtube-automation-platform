@@ -20,6 +20,28 @@ enum VIDEO_PROGRESS {
   COMPLETED
 }
 
+enum THUMBNAIL_STATUS {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum LOGO_STATUS {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum SCHEDULED_UPLOAD_STATUS {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
 
 model User {
   id         String      @id @default(cuid())
@@ -28,9 +50,13 @@ model User {
   email      String     
   imageUrl   String?
   credits    Int         @default(3)
+  youtubeRefreshToken String?
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
   videos     VideoData[]
+  thumbnailRequests ThumbnailRequest[]
+  logoRequests LogoRequest[]
+  scheduledUploads ScheduledUpload[]
 }
 
 model VideoData {
@@ -49,4 +75,43 @@ model VideoData {
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
   user           User           @relation(fields: [clerkId], references: [clerkId], onDelete: Cascade)
+  scheduledUploads ScheduledUpload[]
+}
+
+model ThumbnailRequest {
+  id          String           @id @default(cuid())
+  clerkId     String
+  title       String
+  description String
+  status      THUMBNAIL_STATUS @default(PENDING)
+  thumbnails  Json?            // Array of generated thumbnail objects
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  user        User             @relation(fields: [clerkId], references: [clerkId], onDelete: Cascade)
+}
+
+model LogoRequest {
+  id          String      @id @default(cuid())
+  clerkId     String
+  logoName    String
+  description String
+  status      LOGO_STATUS @default(PENDING)
+  logos       Json?       // Array of generated logo objects
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  user        User        @relation(fields: [clerkId], references: [clerkId], onDelete: Cascade)
+}
+
+model ScheduledUpload {
+  id            String                   @id @default(cuid())
+  videoId       String
+  clerkId       String
+  scheduledDate DateTime
+  timezone      String
+  description   String?
+  status        SCHEDULED_UPLOAD_STATUS @default(PENDING)
+  createdAt     DateTime                 @default(now())
+  updatedAt     DateTime                 @updatedAt
+  user          User                     @relation(fields: [clerkId], references: [clerkId], onDelete: Cascade)
+  video         VideoData                @relation(fields: [videoId], references: [id], onDelete: Cascade)
 }

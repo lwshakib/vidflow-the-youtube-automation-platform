@@ -1,10 +1,9 @@
 import { googleClientId, googleClientSecret } from "@/lib/env/config";
-import { inngest } from "@/lib/inngest/client";
 import { prisma } from "@/lib/prisma";
 import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
   try {
     const user = await currentUser();
     if (!user) {
@@ -17,20 +16,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const body = await req.json();
-    const { videoUrl, script } = body;
-
-    if (!videoUrl || !script) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Video URL and script are required",
-        },
-        { status: 400 }
-      );
-    }
-
-    // Get user from database to check for refresh token
+    // Get user from database
     const dbUser = await prisma.user.findUnique({
       where: {
         clerkId: user.id,
@@ -38,17 +24,14 @@ export async function POST(req: NextRequest) {
     });
 
     if (!dbUser?.youtubeRefreshToken) {
-      return NextResponse.json(
-        {
-          success: false,
-          message:
-            "YouTube account not connected. Please connect your YouTube account first.",
-        },
-        { status: 400 }
-      );
+      return NextResponse.json({
+        success: true,
+        connected: false,
+        message: "No YouTube connection found",
+      });
     }
 
-    // Get fresh access token directly
+    // Try to get a fresh access token using the refresh token directly
     const refreshResponse = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
       headers: {
@@ -79,42 +62,53 @@ export async function POST(req: NextRequest) {
         });
       }
 
-      return NextResponse.json(
-        {
-          success: false,
-          message:
-            "Failed to get YouTube access token. Please reconnect your account.",
-        },
-        { status: 400 }
-      );
+      return NextResponse.json({
+        success: true,
+        connected: false,
+        message: "YouTube connection expired",
+      });
     }
 
-    const result = await inngest.send({
-      name: "upload-video-on-youtube",
-      data: {
-        videoUrl,
-        script,
-        userId: user.id,
-        accessToken: refreshData.access_token,
-      },
-    });
-
-    return NextResponse.json(
+    // Get channel details with fresh access token
+    const channelResponse = await fetch(
+      "https://www.googleapis.com/youtube/v3/channels?part=snippet,contentDetails,statistics&mine=true",
       {
-        success: true,
-        message:
-          "Video Uploading. We will notify you using email when it is uploaded",
-        data: result,
-      },
-      { status: 202 }
+        headers: {
+          Authorization: `Bearer ${refreshData.access_token}`,
+        },
+      }
     );
-  } catch (error: any) {
-    console.error("Error initiating YouTube upload:", error);
+
+    if (!channelResponse.ok) {
+      return NextResponse.json({
+        success: true,
+        connected: false,
+        message: "Failed to fetch channel details",
+      });
+    }
+
+    const channelData = await channelResponse.json();
+
+    if (channelData.items && channelData.items.length > 0) {
+      return NextResponse.json({
+        success: true,
+        connected: true,
+        channel: channelData.items[0],
+        access_token: refreshData.access_token,
+      });
+    } else {
+      return NextResponse.json({
+        success: true,
+        connected: false,
+        message: "No channel found",
+      });
+    }
+  } catch (error) {
+    console.error("Error checking YouTube status:", error);
     return NextResponse.json(
       {
         success: false,
-        message: "Failed to initiate YouTube upload.",
-        error: error?.message || "Unknown error",
+        message: "Internal server error",
       },
       { status: 500 }
     );

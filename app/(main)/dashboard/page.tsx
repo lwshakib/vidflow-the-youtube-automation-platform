@@ -12,7 +12,7 @@ function page({}: Props) {
         <div className="mb-4 text-base">
           Ready to start your faceless YouTube journey? Follow these simple
           steps to automate your channel and content creation process. Whether
-          you’re a beginner or an experienced creator, this guide will help you
+          you're a beginner or an experienced creator, this guide will help you
           get up and running in no time!
         </div>
         <div className="bg-card p-6 rounded-lg shadow-md">
@@ -53,6 +53,22 @@ function page({}: Props) {
               </div>
             </li>
             <li>
+              <span className="font-medium">Generate your channel logo:</span>{" "}
+              <a
+                href="/logo-generator"
+                className="underline text-blue-600"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Logo Generator
+              </a>
+              <div className="ml-5 text-sm text-muted-foreground">
+                Create a professional logo for your YouTube channel using AI.
+                Choose from different styles and customize colors to match your
+                brand identity.
+              </div>
+            </li>
+            <li>
               <span className="font-medium">Create a video:</span>{" "}
               <a
                 href="/create-video"
@@ -66,6 +82,38 @@ function page({}: Props) {
                 Use our AI-powered tools to generate scripts, visuals, and
                 voiceovers. Customize your video style and content with just a
                 few clicks.
+              </div>
+            </li>
+            <li>
+              <span className="font-medium">Generate video thumbnails:</span>{" "}
+              <a
+                href="/thumbnail-generator"
+                className="underline text-blue-600"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Thumbnail Generator
+              </a>
+              <div className="ml-5 text-sm text-muted-foreground">
+                Create eye-catching thumbnails that will increase your video's
+                click-through rate. AI generates multiple options based on your
+                video content and title.
+              </div>
+            </li>
+            <li>
+              <span className="font-medium">Schedule your uploads:</span>{" "}
+              <a
+                href="/smart-upload-scheduler"
+                className="underline text-blue-600"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Smart Upload Scheduler
+              </a>
+              <div className="ml-5 text-sm text-muted-foreground">
+                Plan and schedule your video uploads for optimal timing. Set
+                specific dates and times to maximize your audience reach and
+                maintain consistent posting schedules.
               </div>
             </li>
             <li>
@@ -84,7 +132,7 @@ function page({}: Props) {
               notification.
               <div className="ml-5 text-sm text-muted-foreground">
                 Easily keep track of all your generated videos. Uploading is
-                fully automated—just review your video, hit upload, and we’ll
+                fully automated—just review your video, hit upload, and we'll
                 handle the rest, including sending you a confirmation email.
               </div>
             </li>

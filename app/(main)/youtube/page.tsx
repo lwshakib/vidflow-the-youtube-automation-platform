@@ -49,49 +49,81 @@ export type YoutubeChannel = {
 type Props = {};
 
 function page({}: Props) {
-  const [ytToken, setYtToken] = useState<null | string>(null);
+  const [isConnected, setIsConnected] = useState<boolean>(false);
   const [channel, setChannel] = useState<YoutubeChannel | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const getYTChannelDetails = async (token: string) => {
-    if (!token) return;
-    const url =
-      "https://www.googleapis.com/youtube/v3/channels?part=snippet,contentDetails,statistics&mine=true";
+  const checkYouTubeStatus = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch("/api/youtube/status");
+      const data = await response.json();
 
-    const youtubeRes = await fetch(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    // If token is invalid or expired, remove it
-    if (youtubeRes.status === 401 || youtubeRes.status === 403) {
-      handleRemove();
-      toast.error("YouTube session expired. Please reconnect your account.");
-      return;
-    }
-
-    const data = await youtubeRes.json();
-    if (data.items && data.items.length > 0) {
-      setChannel(data.items[0]);
-    } else {
+      if (data.success) {
+        setIsConnected(data.connected);
+        if (data.connected && data.channel) {
+          setChannel(data.channel);
+        } else {
+          setChannel(null);
+        }
+      } else {
+        setIsConnected(false);
+        setChannel(null);
+        toast.error(data.message || "Failed to check YouTube status");
+      }
+    } catch (error) {
+      console.error("Error checking YouTube status:", error);
+      setIsConnected(false);
       setChannel(null);
+      toast.error("Failed to check YouTube status");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    const ytTokenFind = localStorage.getItem("google_token_for_youtube_access");
-    if (ytTokenFind) {
-      setYtToken(ytTokenFind);
-      getYTChannelDetails(ytTokenFind);
-    }
+    checkYouTubeStatus();
   }, []);
 
-  const handleRemove = () => {
-    localStorage.removeItem("google_token_for_youtube_access");
-    setYtToken(null);
-    setChannel(null);
-    toast.success("YouTube account disconnected.");
+  const handleRemove = async () => {
+    try {
+      const response = await fetch("/api/youtube/disconnect", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setIsConnected(false);
+        setChannel(null);
+        toast.success("YouTube account disconnected successfully.");
+      } else {
+        toast.error(data.message || "Failed to disconnect YouTube account");
+      }
+    } catch (error) {
+      console.error("Error disconnecting YouTube account:", error);
+      toast.error("Failed to disconnect YouTube account");
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="w-full h-full flex items-center justify-center p-4 bg-background">
+        <Card className="max-w-md w-full mx-auto shadow-lg">
+          <CardHeader>
+            <CardTitle className="text-2xl">YouTube Account</CardTitle>
+            <CardDescription>Checking connection status...</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center gap-6 py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-white"></div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-full flex items-center justify-center p-4 bg-background">
@@ -99,14 +131,14 @@ function page({}: Props) {
         <CardHeader>
           <CardTitle className="text-2xl">YouTube Account</CardTitle>
           <CardDescription>
-            {ytToken
+            {isConnected
               ? "Your YouTube account is connected. You can disconnect it below."
               : "Connect your YouTube account to enable video uploads."}
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center gap-6 py-8">
           {/* Show channel info if available */}
-          {ytToken && channel && (
+          {isConnected && channel && (
             <div className="flex flex-col items-center gap-2 mb-6">
               <img
                 src={
@@ -162,7 +194,7 @@ function page({}: Props) {
               </div>
             </div>
           )}
-          {ytToken ? (
+          {isConnected ? (
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button variant="destructive" size="lg">
