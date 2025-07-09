@@ -539,7 +539,7 @@ export const uploadVideoOnYoutube = inngest.createFunction(
 
       try {
         const { data, error } = await resend.emails.send({
-          from: "Acme <onboarding@resend.dev>",
+          from: "Vidflow <notification@mail.vexx.fun>",
           to: [user?.email],
           subject: "Upload complete: Your video is now on YouTube",
           react: EmailTemplate(emailObj),
